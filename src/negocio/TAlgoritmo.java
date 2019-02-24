@@ -2,10 +2,12 @@ package negocio;
 
 import java.util.ArrayList;
 
+import presentacion.Celda;
+
 public class TAlgoritmo {
 	private Coordenadas inicio;
 	private Coordenadas meta;
-	private Casillas[][] matriz;
+	private Celda[][] matriz;
 	private ArrayList<Coordenadas> mejorCamino;
 	
 	public ArrayList<Coordenadas> getMejorCamino() {
@@ -16,7 +18,7 @@ public class TAlgoritmo {
 		this.mejorCamino = mejorCamino;
 	}
 
-	public TAlgoritmo(Coordenadas ini, Coordenadas fin, Casillas[][] m) {
+	public TAlgoritmo(Coordenadas ini, Coordenadas fin, Celda[][] m) {
 		this.inicio = ini;
 		this.meta = fin;
 		this.matriz = m;
@@ -30,7 +32,7 @@ public class TAlgoritmo {
 		return this.meta;
 	}
 
-	public Casillas[][] getMatriz() {
+	public Celda[][] getMatriz() {
 		return this.matriz;
 	}
 }

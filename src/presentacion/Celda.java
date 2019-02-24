@@ -15,6 +15,7 @@ public class Celda extends JLabel{
 	private int fila;
 	private int columna;
 	private Casillas tipo;
+	private double penalizacion;
 	
 	public Celda(){
 		
@@ -57,5 +58,17 @@ public class Celda extends JLabel{
 	
 	public Casillas getTipo() {
 		return this.tipo;
+	}
+	
+	public void crearPenalizacion(double penalizacionMinima, double penalizacionMaxima) {
+		this.penalizacion = (Math.random() * ((penalizacionMaxima+1) - penalizacionMinima)) + penalizacionMinima;
+	}
+
+	public double getPenalizacion() {
+		return penalizacion;
+	}
+
+	public void setPenalizacion(double penalizacion) {
+		this.penalizacion = penalizacion;
 	}
 }

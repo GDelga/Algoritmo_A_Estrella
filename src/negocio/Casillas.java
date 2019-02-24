@@ -4,5 +4,6 @@ public enum Casillas {
 	LIBRE,
 	BLOQUEADO,
 	INICIO,
-	FINAL;
+	FINAL, 
+	PENALIZACION;
 }

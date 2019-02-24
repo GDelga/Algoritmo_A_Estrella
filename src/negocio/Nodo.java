@@ -10,7 +10,6 @@ public class Nodo {
 	private Coordenadas coordenadas; //Coordenadas nodo actual
 	private double costeTotal;
 	private double costeG;
-	private boolean cerrado;
 	
 	public Nodo() {}
 	
@@ -68,14 +67,6 @@ public class Nodo {
 
 	public void setCosteG(double costeG) {
 		this.costeG = costeG;
-	}
-
-	public boolean isCerrado() {
-		return cerrado;
-	}
-
-	public void setCerrado(boolean cerrado) {
-		this.cerrado = cerrado;
 	}
 	
 	@Override

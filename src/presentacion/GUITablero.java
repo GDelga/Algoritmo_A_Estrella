@@ -10,7 +10,9 @@ import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import controlador.Controlador;
 import negocio.Casillas;
@@ -23,7 +25,6 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 	private GUIMatriz guiMatriz;
 	private int anchura;
 	private int altura;
-	private boolean buscado;
 		
 	public GUITablero() {
 		this.guiMatriz = null;
@@ -45,8 +46,10 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 		buscar.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				TAlgoritmo tAlgoritmo = crearMatriz();
-				Controlador.getInstance().accion(new Contexto(Events.BUSCAR_CAMINO, tAlgoritmo));
+				if(guiMatriz.getTieneInicio() && guiMatriz.getTieneMeta()){
+					TAlgoritmo tAlgoritmo = new TAlgoritmo(guiMatriz.getCorInicio(), guiMatriz.getCorFinal(), guiMatriz.getMatriz());
+					Controlador.getInstance().accion(new Contexto(Events.BUSCAR_CAMINO, tAlgoritmo));
+				}
 			}
 		});
 		JButton limpiar = new JButton("Limpiar Tablero");
@@ -63,6 +66,7 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
 				Controlador.getInstance().accion(new Contexto(Events.GUI_MAIN, null));
+				
 			}
 		});
 		JButton salir = new JButton("Salir");
@@ -86,30 +90,6 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 		for(int i = 0; i < caminoMinimo.size(); ++i) {
 			this.guiMatriz.pintarCeldaCamino(caminoMinimo.get(i).getX(), caminoMinimo.get(i).getY());
 		}
-	}
-
-	public TAlgoritmo crearMatriz() {
-		Casillas matriz[][] = new Casillas[altura][anchura];
-		Coordenadas ini = null, fin = null;
-		for(int i = 0; i < altura; ++i) {
-			for(int j = 0; j < anchura; ++j) {
-				if(this.guiMatriz.getCelda(i, j).getTipo() == Casillas.LIBRE) {
-					matriz[i][j] = Casillas.LIBRE;
-				}
-				else if(this.guiMatriz.getCelda(i, j).getTipo() == Casillas.BLOQUEADO) {
-					matriz[i][j] = Casillas.BLOQUEADO;
-				}
-				else if(this.guiMatriz.getCelda(i, j).getTipo() == Casillas.INICIO) {
-					matriz[i][j] = Casillas.INICIO;
-					ini = new Coordenadas(i, j);
-				}
-				else if(this.guiMatriz.getCelda(i, j).getTipo() == Casillas.FINAL) {
-					matriz[i][j] = Casillas.FINAL;
-					fin = new Coordenadas(i, j);
-				}
-			}
-		}
-		return new TAlgoritmo(ini, fin, matriz);
 	}
 
 	@Override
@@ -136,6 +116,9 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 			this.guiMatriz.pintarObstaculo(celda.getFila(), celda.getColumna());
 		}
 		else if(celda.getTipo() == Casillas.BLOQUEADO) {
+			this.guiMatriz.pintarPenalizacion(celda.getFila(), celda.getColumna());
+		}
+		else if(celda.getTipo() == Casillas.PENALIZACION) {
 			this.guiMatriz.pintarCeldaNormal(celda.getFila(), celda.getColumna());
 		}
 	}

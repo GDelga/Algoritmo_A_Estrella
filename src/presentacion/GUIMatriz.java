@@ -7,6 +7,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import negocio.Casillas;
+import negocio.Coordenadas;
 
 
 public class GUIMatriz extends JPanel{
@@ -14,9 +15,13 @@ public class GUIMatriz extends JPanel{
 	private Celda[][] panel;
 	private int altura;
 	private int anchura;
-	private ImageIcon libre, inicio, meta, bloqueado, camino, caja;
+	private ImageIcon libre, inicio, meta, bloqueado, camino, caja, penalizacion;
 	private boolean tieneInicio;
 	private boolean tieneMeta;
+	private double penalizacionMaxima;
+	private double penalizacionMinima;
+	private Coordenadas corInicio;
+	private Coordenadas corFinal;
 	
 	public GUIMatriz(int altura, int anchura){
 		this.tieneInicio = false;
@@ -37,6 +42,13 @@ public class GUIMatriz extends JPanel{
 		this.caja = new ImageIcon(getClass().getResource("/imagenes/cajita.gif"));
 		Image c = caja.getImage();
 		this.caja = new ImageIcon(c.getScaledInstance(70, 70, Image.SCALE_DEFAULT));
+		this.penalizacion = new ImageIcon(getClass().getResource("/imagenes/plantaPirana.gif"));
+		Image p = penalizacion.getImage();
+		this.penalizacion = new ImageIcon(p.getScaledInstance(70, 70, Image.SCALE_DEFAULT));
+		this.penalizacionMaxima = Math.sqrt(Math.pow(altura, 2) + Math.pow(anchura, 2));
+		this.penalizacionMinima = this.penalizacionMaxima / 2;
+		this.corInicio = null;
+		this.corFinal = null;
 		inicializarPanel();
 	}
 
@@ -79,6 +91,9 @@ public class GUIMatriz extends JPanel{
 		else if(this.panel[x][y].getTipo() == Casillas.FINAL) {
 			this.panel[x][y].addFoto(camino, meta);
 		}
+		else if(this.panel[x][y].getTipo() == Casillas.PENALIZACION) {
+			this.panel[x][y].addFoto(camino, penalizacion);
+		}
 	}
 	
 	public void pintarCeldaNormal(int x, int y){		
@@ -90,17 +105,41 @@ public class GUIMatriz extends JPanel{
 		this.panel[x][y].addFoto(this.libre, this.bloqueado);
 		this.panel[x][y].setTipo(Casillas.BLOQUEADO);
 	}
+	
+	public void pintarPenalizacion(int x, int y){		
+		this.panel[x][y].addFoto(this.libre, this.penalizacion);
+		this.panel[x][y].setTipo(Casillas.PENALIZACION);
+		this.panel[x][y].crearPenalizacion(penalizacionMinima, penalizacionMaxima);
+	}
 
 	public void pintarFinal(int xFinal, int yFinal) {
 		this.panel[xFinal][yFinal].addFoto(this.libre, this.meta);
 		this.panel[xFinal][yFinal].setTipo(Casillas.FINAL);
 		this.tieneMeta = true;
+		this.corFinal = new Coordenadas(xFinal, yFinal);
 	}
 	
+	public Coordenadas getCorInicio() {
+		return corInicio;
+	}
+
+	public void setCorInicio(Coordenadas corInicio) {
+		this.corInicio = corInicio;
+	}
+
+	public Coordenadas getCorFinal() {
+		return corFinal;
+	}
+
+	public void setCorFinal(Coordenadas corFinal) {
+		this.corFinal = corFinal;
+	}
+
 	public void pintarInicio(int x, int y) {
 		this.panel[x][y].addFoto(this.libre, this.inicio);
 		this.panel[x][y].setTipo(Casillas.INICIO);
 		this.tieneInicio = true;
+		this.corInicio = new Coordenadas(x, y);
 	}
 
 	/**
@@ -179,5 +218,9 @@ public class GUIMatriz extends JPanel{
 		}
 		tieneInicio = false;
 		tieneMeta = false;
+	}
+	
+	public Celda[][] getMatriz() {
+		return this.panel;
 	}
 }
