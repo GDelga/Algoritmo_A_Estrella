@@ -163,6 +163,13 @@ public class GUITamanoImp extends GUITamano {
 		break;
 		case(Events.GUI_MAIN):
 			this.setVisible(true);
+		break;
+		case(Events.BUSCAR_KO):
+			System.out.println("NO HAY CAMINO");
+		break;
+		case(Events.BUSCAR_OK):
+			this.GUITablero.pintarCamino(contexto);
+		break;
 		}
 	}
 }

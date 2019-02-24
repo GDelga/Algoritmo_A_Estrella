@@ -14,11 +14,11 @@ public class GUIMatriz extends JPanel{
 	private Celda[][] panel;
 	private int altura;
 	private int anchura;
-	private ImageIcon libre, inicio, meta, bloqueado;
+	private ImageIcon libre, inicio, meta, bloqueado, camino, caja;
 	private boolean tieneInicio;
 	private boolean tieneMeta;
 	
-	public GUIMatriz(int anchura, int altura){
+	public GUIMatriz(int altura, int anchura){
 		this.tieneInicio = false;
 		this.tieneMeta = false;
 		this.anchura = anchura;
@@ -33,16 +33,20 @@ public class GUIMatriz extends JPanel{
 		this.bloqueado = new ImageIcon(getClass().getResource("/imagenes/bowser.gif"));
 		Image b = bloqueado.getImage();
 		this.bloqueado = new ImageIcon(b.getScaledInstance(70, 70, Image.SCALE_DEFAULT));
+		this.camino = new ImageIcon(getClass().getResource("/imagenes/suelo.jpg"));
+		this.caja = new ImageIcon(getClass().getResource("/imagenes/cajita.gif"));
+		Image c = caja.getImage();
+		this.caja = new ImageIcon(c.getScaledInstance(70, 70, Image.SCALE_DEFAULT));
 		inicializarPanel();
 	}
 
 	private void inicializarPanel() {
 		this.setName("Tablero");
-		panel= new Celda[anchura][altura];
-		this.setLayout(new GridLayout(anchura, altura)); //ordenacion de celdas alto x ancho
+		panel= new Celda[altura][anchura];
+		this.setLayout(new GridLayout(altura, anchura)); //ordenacion de celdas alto x ancho
 		//INICIALIZACION DE LA TABLA.
-		for( int x=0; x< anchura;x++){
-			for (int y=0; y< altura;y++){
+		for( int x=0; x< altura;x++){
+			for (int y=0; y< anchura;y++){
 				this.panel[x][y] = new Celda();
 				this.add(panel[x][y]);
 				this.panel[x][y].setFoto(this.libre);
@@ -55,8 +59,8 @@ public class GUIMatriz extends JPanel{
 	
 	//Inicializa los escuchadores de los botones de la matriz
 	public void inicializarEscuchadores(MouseListener e){
-		for(int x=0;x<anchura;x++){
-			for(int y=0; y<altura;y++){
+		for(int x=0;x<altura;x++){
+			for(int y=0; y<anchura;y++){
 				this.panel[x][y].addMouseListener(e);;
 				this.panel[x][y].setName("Map");
 				this.panel[x][y].setFila(x);
@@ -66,7 +70,15 @@ public class GUIMatriz extends JPanel{
 	}
 	
 	public void pintarCeldaCamino(int x, int y){		
-		this.panel[x][y].setFoto(this.bloqueado);
+		if(this.panel[x][y].getTipo() == Casillas.LIBRE) {
+			this.panel[x][y].addFoto(camino, caja);
+		}
+		else if(this.panel[x][y].getTipo() == Casillas.INICIO) {
+			this.panel[x][y].addFoto(camino, inicio);
+		}
+		else if(this.panel[x][y].getTipo() == Casillas.FINAL) {
+			this.panel[x][y].addFoto(camino, meta);
+		}
 	}
 	
 	public void pintarCeldaNormal(int x, int y){		
@@ -156,4 +168,16 @@ public class GUIMatriz extends JPanel{
 		return this.meta;
 	}
 	
+	public void limpiarTablero() {
+		for( int x=0; x< altura;x++){
+			for (int y=0; y< anchura;y++){
+				this.panel[x][y].setFoto(this.libre);
+				this.panel[x][y].setTipo(Casillas.LIBRE);
+				this.panel[x][y].setToolTipText(Integer.toString(x + 1) + " , " + Integer.toString(y + 1));
+				this.panel[x][y].setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+			}
+		}
+		tieneInicio = false;
+		tieneMeta = false;
+	}
 }

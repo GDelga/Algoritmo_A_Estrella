@@ -1,11 +1,18 @@
 package presentacion;
 
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
+import controlador.Controlador;
 import negocio.Casillas;
 import negocio.Coordenadas;
 import negocio.TAlgoritmo;
@@ -16,20 +23,69 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 	private GUIMatriz guiMatriz;
 	private int anchura;
 	private int altura;
+	private boolean buscado;
 		
 	public GUITablero() {
+		this.guiMatriz = null;
 	}
 
 	@Override
 	public void actualizar(Contexto contexto) {
+		if(this.guiMatriz != null) this.remove(guiMatriz);
 		TTamano tTamano = (TTamano) contexto.getDato();
 		this.altura = tTamano.getAltura();
 		this.anchura = tTamano.getAnchura();
-		this.guiMatriz = new GUIMatriz(this.anchura, this.altura);
-		this.add(guiMatriz);
+		this.guiMatriz = new GUIMatriz(this.altura, this.anchura);
+		this.setLayout(new BorderLayout());
+		this.add(guiMatriz, BorderLayout.CENTER);
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.guiMatriz.inicializarEscuchadores(this);
+		JPanel panel = new JPanel(new GridLayout(1, 4));
+		JButton buscar = new JButton("Buscar Camino");
+		buscar.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				TAlgoritmo tAlgoritmo = crearMatriz();
+				Controlador.getInstance().accion(new Contexto(Events.BUSCAR_CAMINO, tAlgoritmo));
+			}
+		});
+		JButton limpiar = new JButton("Limpiar Tablero");
+		limpiar.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				guiMatriz.limpiarTablero();
+			}
+		});
+		JButton tamano = new JButton("Cambiar Tamaño");
+		tamano.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+				Controlador.getInstance().accion(new Contexto(Events.GUI_MAIN, null));
+			}
+		});
+		JButton salir = new JButton("Salir");
+		salir.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		panel.add(buscar);
+		panel.add(limpiar);
+		panel.add(tamano);
+		panel.add(salir);
+		this.add(panel, BorderLayout.SOUTH);
 		this.setVisible(true);
+	}
+	
+	public void pintarCamino(Contexto contexto) {
+		ArrayList<Coordenadas> caminoMinimo = (ArrayList<Coordenadas>) contexto.getDato();
+		for(int i = 0; i < caminoMinimo.size(); ++i) {
+			this.guiMatriz.pintarCeldaCamino(caminoMinimo.get(i).getX(), caminoMinimo.get(i).getY());
+		}
 	}
 
 	public TAlgoritmo crearMatriz() {
@@ -72,7 +128,6 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 			this.guiMatriz.setTieneInicio(false);
 			if(!this.guiMatriz.getTieneMeta()) {
 				this.guiMatriz.pintarFinal(celda.getFila(), celda.getColumna());
-				this.guiMatriz.setTieneMeta(false);
 			}
 			else this.guiMatriz.pintarObstaculo(celda.getFila(), celda.getColumna());
 		}
