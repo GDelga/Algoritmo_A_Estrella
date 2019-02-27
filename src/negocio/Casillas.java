@@ -5,5 +5,6 @@ public enum Casillas {
 	BLOQUEADO,
 	INICIO,
 	FINAL, 
-	PENALIZACION;
+	PENALIZACION,
+	SAVEPOINT;
 }

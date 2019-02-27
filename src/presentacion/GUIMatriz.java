@@ -3,6 +3,8 @@ package presentacion;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
@@ -15,13 +17,14 @@ public class GUIMatriz extends JPanel{
 	private Celda[][] panel;
 	private int altura;
 	private int anchura;
-	private ImageIcon libre, inicio, meta, bloqueado, camino, caja, penalizacion;
+	private ImageIcon libre, inicio, meta, bloqueado, camino, caja, penalizacion, bandera;
 	private boolean tieneInicio;
 	private boolean tieneMeta;
 	private double penalizacionMaxima;
 	private double penalizacionMinima;
 	private Coordenadas corInicio;
 	private Coordenadas corFinal;
+	private ArrayList<Coordenadas> savepoint;
 	
 	public GUIMatriz(int altura, int anchura){
 		this.tieneInicio = false;
@@ -45,11 +48,23 @@ public class GUIMatriz extends JPanel{
 		this.penalizacion = new ImageIcon(getClass().getResource("/imagenes/plantaPirana.gif"));
 		Image p = penalizacion.getImage();
 		this.penalizacion = new ImageIcon(p.getScaledInstance(70, 70, Image.SCALE_DEFAULT));
-		this.penalizacionMaxima = Math.sqrt(Math.pow(altura, 2) + Math.pow(anchura, 2));
+		this.penalizacionMaxima = (Math.sqrt(Math.pow(altura, 2) + Math.pow(anchura, 2)))*80/100;
 		this.penalizacionMinima = this.penalizacionMaxima / 2;
 		this.corInicio = null;
 		this.corFinal = null;
+		this.bandera = new ImageIcon(getClass().getResource("/imagenes/castle.gif"));
+		Image band = bandera.getImage();
+		this.bandera = new ImageIcon(band.getScaledInstance(70, 70, Image.SCALE_DEFAULT));
+		this.savepoint = new ArrayList<>();
 		inicializarPanel();
+	}
+
+	public ArrayList<Coordenadas> getSavepoint() {
+		return savepoint;
+	}
+
+	public void setSavepoint(ArrayList<Coordenadas> savepoint) {
+		this.savepoint = savepoint;
 	}
 
 	private void inicializarPanel() {
@@ -93,6 +108,9 @@ public class GUIMatriz extends JPanel{
 		}
 		else if(this.panel[x][y].getTipo() == Casillas.PENALIZACION) {
 			this.panel[x][y].addFoto(camino, penalizacion);
+		}
+		else if(this.panel[x][y].getTipo() == Casillas.SAVEPOINT) {
+			this.panel[x][y].addFoto(camino, bandera);
 		}
 	}
 	
@@ -174,10 +192,6 @@ public class GUIMatriz extends JPanel{
 	public Celda getCelda(int x, int y) {
 		return panel[x][y];
 	}
-	
-	public ImageIcon getLibre() {
-		return this.libre;
-	}
 
 	public boolean getTieneInicio() {
 		return this.tieneInicio;
@@ -194,18 +208,6 @@ public class GUIMatriz extends JPanel{
 	public void setTieneMeta(boolean b) {
 		this.tieneMeta = b;
 	}
-
-	public ImageIcon getInicio() {
-		return this.inicio;
-	}
-	
-	public ImageIcon getBloqueo() {
-		return this.bloqueado;
-	}
-	
-	public ImageIcon getFinal() {
-		return this.meta;
-	}
 	
 	public void limpiarTablero() {
 		for( int x=0; x< altura;x++){
@@ -218,9 +220,16 @@ public class GUIMatriz extends JPanel{
 		}
 		tieneInicio = false;
 		tieneMeta = false;
+		this.savepoint = new ArrayList<>();
 	}
 	
 	public Celda[][] getMatriz() {
 		return this.panel;
+	}
+
+	public void ponerSavePoint(int fila, int columna) {
+		this.panel[fila][columna].setTipo(Casillas.SAVEPOINT);
+		savepoint.add(new Coordenadas(fila, columna));
+		this.panel[fila][columna].addFoto(this.libre, this.bandera);
 	}
 }

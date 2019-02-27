@@ -1,5 +1,4 @@
 package negocio;
-import javax.jws.soap.SOAPBinding;
 
 import negocio.Coordenadas;
 

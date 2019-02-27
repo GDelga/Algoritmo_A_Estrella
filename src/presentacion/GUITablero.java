@@ -1,7 +1,13 @@
 package presentacion;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -11,8 +17,10 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
 
 import controlador.Controlador;
 import negocio.Casillas;
@@ -25,6 +33,7 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 	private GUIMatriz guiMatriz;
 	private int anchura;
 	private int altura;
+	private boolean poniendoSavepoint;
 		
 	public GUITablero() {
 		this.guiMatriz = null;
@@ -32,6 +41,8 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 
 	@Override
 	public void actualizar(Contexto contexto) {
+		this.poniendoSavepoint = false;
+		this.setTitle("Algoritmo A*");
 		if(this.guiMatriz != null) this.remove(guiMatriz);
 		TTamano tTamano = (TTamano) contexto.getDato();
 		this.altura = tTamano.getAltura();
@@ -40,26 +51,37 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 		this.setLayout(new BorderLayout());
 		this.add(guiMatriz, BorderLayout.CENTER);
 		this.setExtendedState(MAXIMIZED_BOTH);
+		this.setMinimumSize(new Dimension(1000, 500));
 		this.guiMatriz.inicializarEscuchadores(this);
-		JPanel panel = new JPanel(new GridLayout(1, 4));
+		JPanel panel = new JPanel(new GridLayout(1, 5));
+		panel.setBackground(Color.ORANGE);
+		panel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 102, 0), 3));
 		JButton buscar = new JButton("Buscar Camino");
+		buscar.setBackground(Color.ORANGE);
+		buscar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 102, 0), 2));
 		buscar.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(guiMatriz.getTieneInicio() && guiMatriz.getTieneMeta()){
-					TAlgoritmo tAlgoritmo = new TAlgoritmo(guiMatriz.getCorInicio(), guiMatriz.getCorFinal(), guiMatriz.getMatriz());
+					guiMatriz.getSavepoint().add(guiMatriz.getCorFinal());
+					TAlgoritmo tAlgoritmo = new TAlgoritmo(guiMatriz.getCorInicio(), guiMatriz.getCorFinal(), guiMatriz.getMatriz(), guiMatriz.getSavepoint());
 					Controlador.getInstance().accion(new Contexto(Events.BUSCAR_CAMINO, tAlgoritmo));
 				}
 			}
 		});
 		JButton limpiar = new JButton("Limpiar Tablero");
+		limpiar.setBackground(Color.ORANGE);
+		limpiar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 102, 0), 2));
 		limpiar.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				poniendoSavepoint = false;
 				guiMatriz.limpiarTablero();
 			}
 		});
 		JButton tamano = new JButton("Cambiar Tamaño");
+		tamano.setBackground(Color.ORANGE);
+		tamano.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 102, 0), 2));
 		tamano.addActionListener(new ActionListener() {
 			
 			@Override
@@ -70,6 +92,8 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 			}
 		});
 		JButton salir = new JButton("Salir");
+		salir.setBackground(Color.ORANGE);
+		salir.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 102, 0), 2));
 		salir.addActionListener(new ActionListener() {
 			
 			@Override
@@ -77,9 +101,34 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 				System.exit(0);
 			}
 		});
+		JButton savepoint = new JButton("Poner Savepoint");
+		savepoint.setBackground(Color.ORANGE);
+		savepoint.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 102, 0), 2));
+		savepoint.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(!poniendoSavepoint) {
+					if(!guiMatriz.getSavepoint().isEmpty()) guiMatriz.setSavepoint(new ArrayList<>());
+					JLabel label = new JLabel("<html><body>Ahora puedes poner todos los savepoints que quieras<br>ten en cuenta que el orden en el que los pones"
+							+ "<br>es en el orden en el que van a recorrerse.<br>No puedes quitarlos ni añadir más."
+							+ "<br>Vuelve a pulsar este botón para dejar de poner Savepoints</body></html>");
+					label.setFont(new Font("Harlow Solid Italic", Font.BOLD, 25));
+					JOptionPane.showMessageDialog(null, label, "¡Aviso!", JOptionPane.INFORMATION_MESSAGE);
+					poniendoSavepoint = true;
+				}
+				else poniendoSavepoint = false;
+			}
+		});
+		buscar.setFont(new Font("Harlow Solid Italic", Font.BOLD, 30));
+		limpiar.setFont(new Font("Harlow Solid Italic", Font.BOLD, 30));
+		tamano.setFont(new Font("Harlow Solid Italic", Font.BOLD, 30));
+		savepoint.setFont(new Font("Harlow Solid Italic", Font.BOLD, 30));
+		salir.setFont(new Font("Harlow Solid Italic", Font.BOLD, 30));
 		panel.add(buscar);
 		panel.add(limpiar);
 		panel.add(tamano);
+		panel.add(savepoint);
 		panel.add(salir);
 		this.add(panel, BorderLayout.SOUTH);
 		this.setVisible(true);
@@ -95,7 +144,17 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		Celda celda = (Celda) e.getSource();
-		if(celda.getTipo() == Casillas.LIBRE) {
+		if (poniendoSavepoint) {
+			 if(celda.getTipo() == Casillas.LIBRE) {
+				 this.guiMatriz.ponerSavePoint(celda.getFila(), celda.getColumna());
+			 }
+			 else {
+				JLabel label = new JLabel("No puedes poner un savepoint en una celda ocupada");
+				label.setFont(new Font("Harlow Solid Italic", Font.BOLD, 25));
+				JOptionPane.showMessageDialog(null, label, "¡Aviso!", JOptionPane.INFORMATION_MESSAGE);
+			 }
+		}
+		else if(celda.getTipo() == Casillas.LIBRE) {
 			if(!this.guiMatriz.getTieneInicio()) {
 				this.guiMatriz.pintarInicio(celda.getFila(), celda.getColumna());
 			}

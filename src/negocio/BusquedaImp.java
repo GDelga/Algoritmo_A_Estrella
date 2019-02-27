@@ -14,8 +14,12 @@ public class BusquedaImp implements Busqueda {
 		int y = actual.getCoordenadas().getY();
 		//Arriba
 		if(x > 0) {
-			if(tAlgoritmo.getMatriz()[x - 1][y].getTipo() == Casillas.PENALIZACION) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x -1, y), 1 + tAlgoritmo.getMatriz()[x - 1][y].getPenalizacion()));
-			else if( tAlgoritmo.getMatriz()[x - 1][y].getTipo() != Casillas.BLOQUEADO) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x -1, y), 1));
+			if(tAlgoritmo.getMatriz()[x - 1][y].getTipo() == Casillas.PENALIZACION) {
+				adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x -1, y), 1 + tAlgoritmo.getMatriz()[x - 1][y].getPenalizacion()));
+			}
+			else if( tAlgoritmo.getMatriz()[x - 1][y].getTipo() != Casillas.BLOQUEADO) {
+				adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x -1, y), 1));
+			}
 		}
 		else {
 			diagonalArribaDerecha = false;
@@ -24,7 +28,7 @@ public class BusquedaImp implements Busqueda {
 		//Abajo
 		if( x < ( tAlgoritmo.getMatriz().length -1)) {
 			if( tAlgoritmo.getMatriz()[x + 1][y].getTipo() == Casillas.PENALIZACION) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x + 1, y), 1 + tAlgoritmo.getMatriz()[x + 1][y].getPenalizacion()));
-			else if( tAlgoritmo.getMatriz()[x + 1][y].getTipo() != Casillas.BLOQUEADO) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x + 1, y), 1));
+			else if( tAlgoritmo.getMatriz()[x + 1][y].getTipo() != Casillas.BLOQUEADO)adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x + 1, y), 1));
 		}
 		else {
 			diagonalAbajoIzquierda = false;
@@ -41,8 +45,8 @@ public class BusquedaImp implements Busqueda {
 		}
 		//Derecha
 		if(y < ( tAlgoritmo.getMatriz()[x].length - 1)) {
-			if(tAlgoritmo.getMatriz()[x][y + 1].getTipo() == Casillas.PENALIZACION)adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x, y + 1), 1 + tAlgoritmo.getMatriz()[x][y + 1].getPenalizacion()));
-			else if(tAlgoritmo.getMatriz()[x][y + 1].getTipo() != Casillas.BLOQUEADO)adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x, y + 1), 1));
+			if(tAlgoritmo.getMatriz()[x][y + 1].getTipo() == Casillas.PENALIZACION) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x, y + 1), 1 + tAlgoritmo.getMatriz()[x][y + 1].getPenalizacion()));
+			else if(tAlgoritmo.getMatriz()[x][y + 1].getTipo() != Casillas.BLOQUEADO) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x, y + 1), 1));
 		}
 		else {
 			diagonalAbajoDerecha = false;
@@ -97,27 +101,47 @@ public class BusquedaImp implements Busqueda {
 	}
 	
 	public ArrayList<Coordenadas> encontrarCamino(TAlgoritmo tAlgoritmo) {
-		Nodo nodoInicial, nodoFinal, actual;
-		nodoFinal = new Nodo(null, null,tAlgoritmo.getCorFinal(),0);
-		nodoInicial = new Nodo(null, nodoFinal, tAlgoritmo.getCorInicio(), 0);
-		ArrayList<Nodo> listaAbierta = new ArrayList<>();
-		ArrayList<Nodo> listaCerrada = new ArrayList<>();
-		listaAbierta.add(nodoInicial);
+		Nodo nodoInicial, nodoFinal, actual, savePoint;
+		nodoFinal = new Nodo(null, null,tAlgoritmo.getCorFinal(),0); //Creo el nodo final
+		savePoint = new Nodo(null, null, tAlgoritmo.getMetas().get(0), 0); //Creo mi primer savepoint
+		//Creo el nodo inicial que tiene como destino el savepoint
+		nodoInicial = new Nodo(null, savePoint, tAlgoritmo.getCorInicio(), 0); 
+		int cont = 0; //Contador del savepoint actual
+		ArrayList<Nodo> listaAbierta = new ArrayList<>(); //lista de nodos abiertos
+		ArrayList<Nodo> listaCerrada = new ArrayList<>(); //lista de nodos cerrados
+		ArrayList<Coordenadas> mejorCamino = new ArrayList<>(); //lista del mejor camino
+		ArrayList<Coordenadas> caminoActual = new ArrayList<>(); //lista del camino actual
+		listaAbierta.add(nodoInicial);// añado el nodo inicial a la lista de abiertos
 		ArrayList<Nodo> adyacentes;
-		while(listaAbierta.size() > 0 && !buscarListaCerrada(listaCerrada, nodoFinal)){
+		while(listaAbierta.size() > 0){
 			actual = listaAbierta.get(0);
-			//Si es el nodoFinal
-			if(actual.equals(nodoFinal)){
-				ArrayList<Coordenadas> mejorCamino = new ArrayList<>();
-				while(actual != null) {
-					mejorCamino.add(actual.getCoordenadas());
+			if(!actual.equals(nodoFinal) && actual.equals(savePoint)) { 
+				//Si mi actual no es el nodo final y hemos llegado a un savepoint
+				cont++;
+				savePoint = new Nodo(null, null, tAlgoritmo.getMetas().get(cont), 0); //Paso al siguiente savepoint
+				nodoInicial = new Nodo(null, savePoint, actual.getCoordenadas(), 0); //Mi inicial es el nodo actual
+				while(actual != null) { //Creo el camino actual
+					caminoActual.add(actual.getCoordenadas());
 					actual = actual.getNodoPadre();
 				}
-				return mejorCamino; //LLamada al controlador
+				this.crearCamino(mejorCamino, caminoActual); //Añado el actual al camino total
+				caminoActual = new ArrayList<>(); //Reinicializo
+				listaAbierta = new ArrayList<>(); //Reinicializo
+				listaAbierta.add(nodoInicial); //Añado el nodo inicial a la lista de abiertas
+				listaCerrada = new ArrayList<>(); //Reinicializo
+			}
+			else if(actual.equals(nodoFinal) && actual.equals(savePoint)){ 
+				//Si estamos en el nodo final y es nuestro savePoint
+				while(actual != null) { //creamos el camino actual
+					caminoActual.add(actual.getCoordenadas());
+					actual = actual.getNodoPadre();
+				}
+				this.crearCamino(mejorCamino, caminoActual);//Añado el actual al camino total
+				return mejorCamino;
 			}
 			else {
 				listaAbierta.remove(actual);
-				adyacentes = encontrarAdyacentes(tAlgoritmo, actual, nodoFinal);
+				adyacentes = encontrarAdyacentes(tAlgoritmo, actual, savePoint);
 				for(Nodo i: adyacentes) {
 					if(!buscarListaCerrada(listaCerrada, i)) { //Si no está en la cerrada
 						Nodo n = this.buscarListaAbierta(listaAbierta,i);
@@ -126,8 +150,8 @@ public class BusquedaImp implements Busqueda {
 						}
 						else { //Si ya está en la lista abierta
 							if(i.getCosteTotal() < n.getCosteTotal()) {//Reevaluo el coste
-								listaAbierta.remove(n);
-								añadirNodoAListaAbierta(listaAbierta, i);
+								listaAbierta.remove(n); //Borro el nodo de la lista
+								añadirNodoAListaAbierta(listaAbierta, i); //Añado el nodo que tiene mejor coste a la lista
 							}
 						}
 					}
@@ -136,6 +160,12 @@ public class BusquedaImp implements Busqueda {
 			}
 		}
 		return null;
+	}
+
+	private void crearCamino(ArrayList<Coordenadas> mejorCamino, ArrayList<Coordenadas> caminoActual) {
+		for(int i = caminoActual.size() -1; i >= 0 ;--i) {
+			mejorCamino.add(caminoActual.get(i));
+		}
 	}
 	
 	

@@ -5,6 +5,11 @@
  */
 package presentacion;
 
+import java.awt.Font;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import controlador.Controlador;
 import negocio.TTamano;
 
@@ -35,7 +40,7 @@ public class GUITamanoImp extends GUITamano {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
+    	this.setTitle("Algoritmo A*");
         jButtonCrear = new javax.swing.JButton();
         jButtonCerrar = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
@@ -165,7 +170,9 @@ public class GUITamanoImp extends GUITamano {
 			this.setVisible(true);
 		break;
 		case(Events.BUSCAR_KO):
-			System.out.println("NO HAY CAMINO");
+			JLabel label = new JLabel("No existe ningún camino");
+			label.setFont(new Font("Harlow Solid Italic", Font.BOLD, 30));
+			JOptionPane.showMessageDialog(null, label, "¡GAME OVER!", JOptionPane.INFORMATION_MESSAGE);
 		break;
 		case(Events.BUSCAR_OK):
 			this.GUITablero.pintarCamino(contexto);
