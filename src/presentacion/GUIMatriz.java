@@ -25,6 +25,7 @@ public class GUIMatriz extends JPanel{
 	private Coordenadas corInicio;
 	private Coordenadas corFinal;
 	private ArrayList<Coordenadas> savepoint;
+	private double alturaCasillas;
 	
 	public GUIMatriz(int altura, int anchura){
 		this.tieneInicio = false;
@@ -96,7 +97,7 @@ public class GUIMatriz extends JPanel{
 		}
 	}
 	
-	public void pintarCeldaCamino(int x, int y){		
+	public void pintarCeldaCamino(int x, int y){
 		if(this.panel[x][y].getTipo() == Casillas.LIBRE) {
 			this.panel[x][y].addFoto(camino, caja);
 		}
@@ -232,4 +233,29 @@ public class GUIMatriz extends JPanel{
 		savepoint.add(new Coordenadas(fila, columna));
 		this.panel[fila][columna].addFoto(this.libre, this.bandera);
 	}
+
+	public double getAlturaCasillas() {
+		return alturaCasillas;
+	}
+
+	public void setAlturaCasillas(double alturaCasillas) {
+		this.alturaCasillas = alturaCasillas;
+	}
+
+	public void ponerAlturas(double alt) {
+		this.alturaCasillas = alt;
+		for( int x=0; x< altura;x++){
+			for (int y=0; y< anchura;y++){
+				this.panel[x][y].crearAltura(alturaCasillas);
+			}
+		}
+		for( int x=0; x< altura;x++){
+			for (int y=0; y< anchura;y++){
+				System.out.print("| " + this.panel[x][y].getAltura() + " |");
+			}
+			System.out.println();
+		}
+	}
+	
+	
 }

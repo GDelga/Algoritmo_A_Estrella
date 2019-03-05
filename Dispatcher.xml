@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<events>
-	<event id="1000">presentacion.GUITamano</event>
-	<event id="100">presentacion.GUITamano</event>
-	<event id="200">presentacion.GUITamano</event>
-	<event id="201">presentacion.GUITamano</event>
-	<event id="202">presentacion.GUITamano</event>
-</events>

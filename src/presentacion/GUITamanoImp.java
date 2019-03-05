@@ -120,7 +120,10 @@ public class GUITamanoImp extends GUITamano {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonCerrarActionPerformed(java.awt.event.ActionEvent evt) {
-        System.exit(0);
+    	JLabel label = new JLabel("<html><body>Vuelve pronto<center>😄</center></body></html>");
+		label.setFont(new Font("Harlow Solid Italic", Font.BOLD, 25));
+		JOptionPane.showMessageDialog(null, label, "¡Hasta pronto!", JOptionPane.INFORMATION_MESSAGE);
+		System.exit(0);
     }
 
     private void jButtonCrearActionPerformed(java.awt.event.ActionEvent evt) {
@@ -163,7 +166,7 @@ public class GUITamanoImp extends GUITamano {
 	public void actualizar(Contexto contexto) {
 		switch(contexto.getEvento()) {
 		case(Events.GUI_TABLERO):
-			this.setVisible(false);
+			this.limpiar();
 			this.GUITablero.actualizar(contexto);
 		break;
 		case(Events.GUI_MAIN):
@@ -178,5 +181,11 @@ public class GUITamanoImp extends GUITamano {
 			this.GUITablero.pintarCamino(contexto);
 		break;
 		}
+	}
+
+	private void limpiar() {
+		this.jTextFieldColumnas.setText("");
+		this.jTextFieldFilas.setText("");
+		this.setVisible(false);
 	}
 }

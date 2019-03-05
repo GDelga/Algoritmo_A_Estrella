@@ -16,7 +16,21 @@ public class Celda extends JLabel{
 	private int columna;
 	private Casillas tipo;
 	private double penalizacion;
+	private double altura;
 	
+	public double getAltura() {
+		return altura;
+	}
+
+	public void setAltura(double altura) {
+		this.altura = altura;
+	}
+	
+	public void crearAltura(double altura) {
+		this.altura = (Math.random() * ((altura+500) - (altura/2))) + (altura/2);
+		System.out.println(this.altura);
+	}
+
 	public Celda(){
 		
 	}

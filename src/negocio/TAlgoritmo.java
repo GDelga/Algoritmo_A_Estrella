@@ -9,6 +9,8 @@ public class TAlgoritmo {
 	private Coordenadas meta;
 	private Celda[][] matriz;
 	private ArrayList<Coordenadas> metas;
+	private boolean modoAltura;
+	private double altura;
 
 	public ArrayList<Coordenadas> getMetas() {
 		return metas;
@@ -18,11 +20,23 @@ public class TAlgoritmo {
 		this.metas = metas;
 	}
 
-	public TAlgoritmo(Coordenadas ini, Coordenadas fin, Celda[][] m, ArrayList<Coordenadas> arrayList) {
+	//Modo sin altura
+	public TAlgoritmo(Coordenadas ini, Coordenadas fin, Celda[][] m, ArrayList<Coordenadas> arrayList, boolean modo) {
 		this.inicio = ini;
 		this.meta = fin;
 		this.matriz = m;
 		this.metas = arrayList;
+		this.modoAltura = modo;
+	}
+	
+	//Modo con altura
+	public TAlgoritmo(Coordenadas ini, Coordenadas fin, Celda[][] m, ArrayList<Coordenadas> arrayList, boolean modo, double altura) {
+		this.inicio = ini;
+		this.meta = fin;
+		this.matriz = m;
+		this.metas = arrayList;
+		this.modoAltura = modo;
+		this.altura = altura;
 	}
 
 	public Coordenadas getCorInicio() {
@@ -36,4 +50,21 @@ public class TAlgoritmo {
 	public Celda[][] getMatriz() {
 		return this.matriz;
 	}
+
+	public boolean getModoAltura() {
+		return modoAltura;
+	}
+
+	public void setModoAltura(boolean modoAltura) {
+		this.modoAltura = modoAltura;
+	}
+
+	public double getAltura() {
+		return altura;
+	}
+
+	public void setAltura(double altura) {
+		this.altura = altura;
+	}
+	
 }

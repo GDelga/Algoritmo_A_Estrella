@@ -14,11 +14,13 @@ public class BusquedaImp implements Busqueda {
 		int y = actual.getCoordenadas().getY();
 		//Arriba
 		if(x > 0) {
-			if(tAlgoritmo.getMatriz()[x - 1][y].getTipo() == Casillas.PENALIZACION) {
-				adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x -1, y), 1 + tAlgoritmo.getMatriz()[x - 1][y].getPenalizacion()));
-			}
-			else if( tAlgoritmo.getMatriz()[x - 1][y].getTipo() != Casillas.BLOQUEADO) {
-				adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x -1, y), 1));
+			if(!tAlgoritmo.getModoAltura() || (tAlgoritmo.getModoAltura() && tAlgoritmo.getAltura() >= tAlgoritmo.getMatriz()[x - 1][y].getAltura())){
+				if(tAlgoritmo.getMatriz()[x - 1][y].getTipo() == Casillas.PENALIZACION) {
+					adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x -1, y), 1 + tAlgoritmo.getMatriz()[x - 1][y].getPenalizacion()));
+				}
+				else if( tAlgoritmo.getMatriz()[x - 1][y].getTipo() != Casillas.BLOQUEADO) {
+					adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x -1, y), 1));
+				}
 			}
 		}
 		else {
@@ -27,8 +29,10 @@ public class BusquedaImp implements Busqueda {
 		}
 		//Abajo
 		if( x < ( tAlgoritmo.getMatriz().length -1)) {
-			if( tAlgoritmo.getMatriz()[x + 1][y].getTipo() == Casillas.PENALIZACION) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x + 1, y), 1 + tAlgoritmo.getMatriz()[x + 1][y].getPenalizacion()));
-			else if( tAlgoritmo.getMatriz()[x + 1][y].getTipo() != Casillas.BLOQUEADO)adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x + 1, y), 1));
+			if(!tAlgoritmo.getModoAltura() || (tAlgoritmo.getModoAltura() && tAlgoritmo.getAltura() >= tAlgoritmo.getMatriz()[x + 1][y].getAltura())){
+				if( tAlgoritmo.getMatriz()[x + 1][y].getTipo() == Casillas.PENALIZACION) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x + 1, y), 1 + tAlgoritmo.getMatriz()[x + 1][y].getPenalizacion()));
+				else if( tAlgoritmo.getMatriz()[x + 1][y].getTipo() != Casillas.BLOQUEADO)adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x + 1, y), 1));
+			}
 		}
 		else {
 			diagonalAbajoIzquierda = false;
@@ -36,8 +40,10 @@ public class BusquedaImp implements Busqueda {
 		}
 		//Izquierda
 		if(y > 0) {
-			if(tAlgoritmo.getMatriz()[x][y-1].getTipo() == Casillas.PENALIZACION) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x, y - 1), 1 + tAlgoritmo.getMatriz()[x][y-1].getPenalizacion()));
-			else if(tAlgoritmo.getMatriz()[x][y-1].getTipo() != Casillas.BLOQUEADO) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x, y - 1), 1));
+			if(!tAlgoritmo.getModoAltura() || (tAlgoritmo.getModoAltura() && tAlgoritmo.getAltura() >= tAlgoritmo.getMatriz()[x][y -1].getAltura())){
+				if(tAlgoritmo.getMatriz()[x][y-1].getTipo() == Casillas.PENALIZACION) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x, y - 1), 1 + tAlgoritmo.getMatriz()[x][y-1].getPenalizacion()));
+				else if(tAlgoritmo.getMatriz()[x][y-1].getTipo() != Casillas.BLOQUEADO) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x, y - 1), 1));
+			}
 		}
 		else {
 			diagonalAbajoIzquierda = false;
@@ -45,8 +51,10 @@ public class BusquedaImp implements Busqueda {
 		}
 		//Derecha
 		if(y < ( tAlgoritmo.getMatriz()[x].length - 1)) {
-			if(tAlgoritmo.getMatriz()[x][y + 1].getTipo() == Casillas.PENALIZACION) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x, y + 1), 1 + tAlgoritmo.getMatriz()[x][y + 1].getPenalizacion()));
-			else if(tAlgoritmo.getMatriz()[x][y + 1].getTipo() != Casillas.BLOQUEADO) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x, y + 1), 1));
+			if(!tAlgoritmo.getModoAltura() || (tAlgoritmo.getModoAltura() && tAlgoritmo.getAltura() >= tAlgoritmo.getMatriz()[x][y + 1].getAltura())){
+				if(tAlgoritmo.getMatriz()[x][y + 1].getTipo() == Casillas.PENALIZACION) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x, y + 1), 1 + tAlgoritmo.getMatriz()[x][y + 1].getPenalizacion()));
+				else if(tAlgoritmo.getMatriz()[x][y + 1].getTipo() != Casillas.BLOQUEADO) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x, y + 1), 1));
+			}
 		}
 		else {
 			diagonalAbajoDerecha = false;
@@ -54,23 +62,31 @@ public class BusquedaImp implements Busqueda {
 		}
 		//Diagonal Arriba Izquierda
 		if(diagonalArribaIzquierda &&  tAlgoritmo.getMatriz()[x - 1][y - 1].getTipo() != Casillas.BLOQUEADO) {
-			if(tAlgoritmo.getMatriz()[x - 1][y - 1].getTipo() == Casillas.PENALIZACION) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x - 1, y - 1), Math.sqrt(2) + tAlgoritmo.getMatriz()[x - 1][y - 1].getPenalizacion()));
-			else adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x - 1, y - 1), Math.sqrt(2)));
+			if(!tAlgoritmo.getModoAltura() || (tAlgoritmo.getModoAltura() && tAlgoritmo.getAltura() >= tAlgoritmo.getMatriz()[x - 1][y - 1].getAltura())){
+				if(tAlgoritmo.getMatriz()[x - 1][y - 1].getTipo() == Casillas.PENALIZACION) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x - 1, y - 1), Math.sqrt(2) + tAlgoritmo.getMatriz()[x - 1][y - 1].getPenalizacion()));
+				else adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x - 1, y - 1), Math.sqrt(2)));
+			}
 		}
 		//Diagonal Arriba Derecha
 		if(diagonalArribaDerecha &&  tAlgoritmo.getMatriz()[x - 1][y + 1].getTipo() != Casillas.BLOQUEADO) {
-			if (tAlgoritmo.getMatriz()[x - 1][y + 1].getTipo() == Casillas.PENALIZACION) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x - 1, y + 1), Math.sqrt(2) + tAlgoritmo.getMatriz()[x - 1][y + 1].getPenalizacion()));
-			else adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x - 1, y + 1), Math.sqrt(2)));
+			if(!tAlgoritmo.getModoAltura() || (tAlgoritmo.getModoAltura() && tAlgoritmo.getAltura() >= tAlgoritmo.getMatriz()[x - 1][y + 1].getAltura())){
+				if (tAlgoritmo.getMatriz()[x - 1][y + 1].getTipo() == Casillas.PENALIZACION) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x - 1, y + 1), Math.sqrt(2) + tAlgoritmo.getMatriz()[x - 1][y + 1].getPenalizacion()));
+				else adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x - 1, y + 1), Math.sqrt(2)));
+			}
 		}
 		//Diagonal Abajo Izquierda
 		if(diagonalAbajoIzquierda &&  tAlgoritmo.getMatriz()[x + 1][y - 1].getTipo() != Casillas.BLOQUEADO) {
-			if(tAlgoritmo.getMatriz()[x + 1][y - 1].getTipo() == Casillas.PENALIZACION)  adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x + 1, y - 1), Math.sqrt(2) + tAlgoritmo.getMatriz()[x + 1][y - 1].getPenalizacion()));
-			else adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x + 1, y - 1), Math.sqrt(2)));
+			if(!tAlgoritmo.getModoAltura() || (tAlgoritmo.getModoAltura() && tAlgoritmo.getAltura() >= tAlgoritmo.getMatriz()[x + 1][y - 1].getAltura())){
+				if(tAlgoritmo.getMatriz()[x + 1][y - 1].getTipo() == Casillas.PENALIZACION)  adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x + 1, y - 1), Math.sqrt(2) + tAlgoritmo.getMatriz()[x + 1][y - 1].getPenalizacion()));
+				else adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x + 1, y - 1), Math.sqrt(2)));
+			}
 		}
 		//Diagonal Abajo Derecha
 		if(diagonalAbajoDerecha &&  tAlgoritmo.getMatriz()[x + 1][y + 1].getTipo() != Casillas.BLOQUEADO) {
-			if(tAlgoritmo.getMatriz()[x + 1][y + 1].getTipo() == Casillas.PENALIZACION) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x + 1, y + 1), Math.sqrt(2) + tAlgoritmo.getMatriz()[x + 1][y + 1].getPenalizacion()));
-			else adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x + 1, y + 1), Math.sqrt(2)));
+			if(!tAlgoritmo.getModoAltura() || (tAlgoritmo.getModoAltura() && tAlgoritmo.getAltura() >= tAlgoritmo.getMatriz()[x + 1][y + 1].getAltura())){
+				if(tAlgoritmo.getMatriz()[x + 1][y + 1].getTipo() == Casillas.PENALIZACION) adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x + 1, y + 1), Math.sqrt(2) + tAlgoritmo.getMatriz()[x + 1][y + 1].getPenalizacion()));
+				else adyacentes.add(new Nodo(actual, nodoFinal, new Coordenadas(x + 1, y + 1), Math.sqrt(2)));
+			}
 		}
 		return adyacentes;
 	}
@@ -102,6 +118,10 @@ public class BusquedaImp implements Busqueda {
 	
 	public ArrayList<Coordenadas> encontrarCamino(TAlgoritmo tAlgoritmo) {
 		Nodo nodoInicial, nodoFinal, actual, savePoint;
+		if(tAlgoritmo.getModoAltura()) {
+			if(!puedePasar(tAlgoritmo))
+				return null;
+		}
 		nodoFinal = new Nodo(null, null,tAlgoritmo.getCorFinal(),0); //Creo el nodo final
 		savePoint = new Nodo(null, null, tAlgoritmo.getMetas().get(0), 0); //Creo mi primer savepoint
 		//Creo el nodo inicial que tiene como destino el savepoint
@@ -113,6 +133,7 @@ public class BusquedaImp implements Busqueda {
 		ArrayList<Coordenadas> caminoActual = new ArrayList<>(); //lista del camino actual
 		listaAbierta.add(nodoInicial);// añado el nodo inicial a la lista de abiertos
 		ArrayList<Nodo> adyacentes;
+		
 		while(listaAbierta.size() > 0){
 			actual = listaAbierta.get(0);
 			if(!actual.equals(nodoFinal) && actual.equals(savePoint)) { 
@@ -160,6 +181,19 @@ public class BusquedaImp implements Busqueda {
 			}
 		}
 		return null;
+	}
+
+	private boolean puedePasar(TAlgoritmo tAlgoritmo) {
+		if(tAlgoritmo.getMatriz()[tAlgoritmo.getCorInicio().getX()][tAlgoritmo.getCorInicio().getY()].getAltura() > tAlgoritmo.getAltura()) {
+			return false;
+		}
+		else {
+			for(int i = 0; i < tAlgoritmo.getMetas().size(); ++i) {
+				if(tAlgoritmo.getMatriz()[tAlgoritmo.getMetas().get(i).getX()][tAlgoritmo.getMetas().get(i).getY()].getAltura() > tAlgoritmo.getAltura())
+					return false;
+			}
+		}
+		return true;
 	}
 
 	private void crearCamino(ArrayList<Coordenadas> mejorCamino, ArrayList<Coordenadas> caminoActual) {

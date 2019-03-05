@@ -7,8 +7,8 @@ public class Nodo {
 	private Nodo nodoPadre; //Sirve para saber el nodo que le precede
 	private Nodo nodoFinal; //Indica el destino
 	private Coordenadas coordenadas; //Coordenadas nodo actual
-	private double costeTotal;
-	private double costeG;
+	private double costeTotal; //coste g + coste h
+	private double costeG; 
 	
 	public Nodo() {}
 	

@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -20,7 +21,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
+
+import com.placeholder.PlaceHolder;
 
 import controlador.Controlador;
 import negocio.Casillas;
@@ -34,6 +38,7 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 	private int anchura;
 	private int altura;
 	private boolean poniendoSavepoint;
+	private boolean modoAltura;
 		
 	public GUITablero() {
 		this.guiMatriz = null;
@@ -41,6 +46,7 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 
 	@Override
 	public void actualizar(Contexto contexto) {
+		this.modoAltura = false;
 		this.poniendoSavepoint = false;
 		this.setTitle("Algoritmo A*");
 		if(this.guiMatriz != null) this.remove(guiMatriz);
@@ -53,7 +59,7 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.setMinimumSize(new Dimension(1000, 500));
 		this.guiMatriz.inicializarEscuchadores(this);
-		JPanel panel = new JPanel(new GridLayout(1, 5));
+		JPanel panel = new JPanel(new GridLayout(2, 3));
 		panel.setBackground(Color.ORANGE);
 		panel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 102, 0), 3));
 		JButton buscar = new JButton("Buscar Camino");
@@ -63,9 +69,15 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(guiMatriz.getTieneInicio() && guiMatriz.getTieneMeta()){
+					modoAltura = false;
 					guiMatriz.getSavepoint().add(guiMatriz.getCorFinal());
-					TAlgoritmo tAlgoritmo = new TAlgoritmo(guiMatriz.getCorInicio(), guiMatriz.getCorFinal(), guiMatriz.getMatriz(), guiMatriz.getSavepoint());
+					TAlgoritmo tAlgoritmo = new TAlgoritmo(guiMatriz.getCorInicio(), guiMatriz.getCorFinal(), guiMatriz.getMatriz(), guiMatriz.getSavepoint(), modoAltura);
 					Controlador.getInstance().accion(new Contexto(Events.BUSCAR_CAMINO, tAlgoritmo));
+				}
+				else {
+					JLabel label = new JLabel("<html><body>Tiene que existir un inicio y una meta</body></html>");
+					label.setFont(new Font("Harlow Solid Italic", Font.BOLD, 25));
+					JOptionPane.showMessageDialog(null, label, "¡Aviso!", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 		});
@@ -98,6 +110,9 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				JLabel label = new JLabel("<html><body>Vuelve pronto<center>😄</center></body></html>");
+				label.setFont(new Font("Harlow Solid Italic", Font.BOLD, 25));
+				JOptionPane.showMessageDialog(null, label, "¡Hasta pronto!", JOptionPane.INFORMATION_MESSAGE);
 				System.exit(0);
 			}
 		});
@@ -116,8 +131,56 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 					label.setFont(new Font("Harlow Solid Italic", Font.BOLD, 25));
 					JOptionPane.showMessageDialog(null, label, "¡Aviso!", JOptionPane.INFORMATION_MESSAGE);
 					poniendoSavepoint = true;
+					savepoint.setBackground(Color.RED);
 				}
-				else poniendoSavepoint = false;
+				else {
+					poniendoSavepoint = false;
+					savepoint.setBackground(Color.ORANGE);
+					JLabel label = new JLabel("<html><body>Se ha desactivado la opción de poner Savepoint</body></html>");
+					label.setFont(new Font("Harlow Solid Italic", Font.BOLD, 25));
+					JOptionPane.showMessageDialog(null, label, "¡Aviso!", JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+		});
+		JPanel pa = new JPanel(new GridLayout(1, 2));
+		pa.setBackground(Color.ORANGE);
+		JTextField tex = new JTextField();
+		PlaceHolder placeholder = new PlaceHolder(tex, "Introduce altura máxima");
+		tex.setHorizontalAlignment(SwingConstants.CENTER);
+		JButton altura = new JButton("Buscar con altura");
+		altura.setBackground(Color.ORANGE);
+		altura.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 102, 0), 2));
+		altura.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(guiMatriz.getTieneInicio() && guiMatriz.getTieneMeta()){
+					int nErrores = 0;
+					double alt = 0;
+					if(!tex.getText().matches("^([1-9]{1}[0-9]*)$")) {
+			    		nErrores++;
+			    	}
+			    	else {
+			    		alt = Double.parseDouble(tex.getText());
+			    	}
+					if(nErrores ==  0) {
+						modoAltura = true;
+						guiMatriz.ponerAlturas(alt);
+						guiMatriz.getSavepoint().add(guiMatriz.getCorFinal());
+						TAlgoritmo tAlgoritmo = new TAlgoritmo(guiMatriz.getCorInicio(), guiMatriz.getCorFinal(), guiMatriz.getMatriz(), guiMatriz.getSavepoint(), modoAltura, alt);
+						Controlador.getInstance().accion(new Contexto(Events.BUSCAR_CAMINO, tAlgoritmo));
+					}
+					else {
+						JLabel label = new JLabel("<html><body>Introduce un número positivo mayor que 0</body></html>");
+						label.setFont(new Font("Harlow Solid Italic", Font.BOLD, 25));
+						JOptionPane.showMessageDialog(null, label, "¡Aviso!", JOptionPane.INFORMATION_MESSAGE);
+					}
+				}
+				else {
+					JLabel label = new JLabel("<html><body>Tiene que existir un inicio y una meta</body></html>");
+					label.setFont(new Font("Harlow Solid Italic", Font.BOLD, 25));
+					JOptionPane.showMessageDialog(null, label, "¡Aviso!", JOptionPane.INFORMATION_MESSAGE);
+				}
 			}
 		});
 		buscar.setFont(new Font("Harlow Solid Italic", Font.BOLD, 30));
@@ -125,10 +188,16 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 		tamano.setFont(new Font("Harlow Solid Italic", Font.BOLD, 30));
 		savepoint.setFont(new Font("Harlow Solid Italic", Font.BOLD, 30));
 		salir.setFont(new Font("Harlow Solid Italic", Font.BOLD, 30));
+		altura.setFont(new Font("Harlow Solid Italic", Font.BOLD, 30));
+		tex.setFont(new Font("Harlow Solid Italic", Font.BOLD, 17));
+		altura.setFont(new Font("Harlow Solid Italic", Font.BOLD, 20));
+		pa.add(tex);
+		pa.add(altura);
 		panel.add(buscar);
 		panel.add(limpiar);
 		panel.add(tamano);
 		panel.add(savepoint);
+		panel.add(pa);
 		panel.add(salir);
 		this.add(panel, BorderLayout.SOUTH);
 		this.setVisible(true);
@@ -137,7 +206,7 @@ public class GUITablero extends JFrame implements MouseListener, GUI{
 	public void pintarCamino(Contexto contexto) {
 		ArrayList<Coordenadas> caminoMinimo = (ArrayList<Coordenadas>) contexto.getDato();
 		for(int i = 0; i < caminoMinimo.size(); ++i) {
-			this.guiMatriz.pintarCeldaCamino(caminoMinimo.get(i).getX(), caminoMinimo.get(i).getY());
+			this.guiMatriz.pintarCeldaCamino(caminoMinimo.get(i).getX(), caminoMinimo.get(i).getY());			
 		}
 	}
 
