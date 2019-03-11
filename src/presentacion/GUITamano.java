@@ -2,6 +2,9 @@ package presentacion;
 
 import javax.swing.JFrame;
 
+/**
+ * @author Guillermo Delgado Yepes
+ */
 public abstract class GUITamano extends JFrame implements GUI{
 
 	private static GUITamano instance;

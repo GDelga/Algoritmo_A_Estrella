@@ -8,6 +8,9 @@ import negocio.TAlgoritmo;
 import presentacion.Contexto;
 import presentacion.Events;
 
+/**
+ * @author Guillermo Delgado Yepes
+ */
 public class CommandBuscarCamino implements Command {
 
 	@Override

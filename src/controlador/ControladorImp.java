@@ -5,6 +5,9 @@ import command.FactoriaCommand;
 import dispatcher.Dispatcher;
 import presentacion.Contexto;
 
+/**
+ * @author Guillermo Delgado Yepes
+ */
 public class ControladorImp extends Controlador {
 
 	@Override

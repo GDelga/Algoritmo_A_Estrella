@@ -2,6 +2,9 @@ package negocio;
 
 import java.util.ArrayList;
 
+/**
+ * @author Guillermo Delgado Yepes
+ */
 public class BusquedaImp implements Busqueda {
 
 	private ArrayList<Nodo> encontrarAdyacentes(TAlgoritmo tAlgoritmo, Nodo actual, Nodo nodoFinal){

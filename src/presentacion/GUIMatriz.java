@@ -1,5 +1,6 @@
 package presentacion;
 
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseListener;
@@ -11,7 +12,9 @@ import javax.swing.JPanel;
 import negocio.Casillas;
 import negocio.Coordenadas;
 
-
+/**
+ * @author Guillermo Delgado Yepes
+ */
 public class GUIMatriz extends JPanel{
 
 	private Celda[][] panel;
@@ -28,11 +31,12 @@ public class GUIMatriz extends JPanel{
 	private double alturaCasillas;
 	
 	public GUIMatriz(int altura, int anchura){
+		this.setBackground(Color.ORANGE);
 		this.tieneInicio = false;
 		this.tieneMeta = false;
 		this.anchura = anchura;
 		this.altura = altura;
-		this.libre = new ImageIcon(getClass().getResource("/imagenes/hierba.jpg"));
+		this.libre = new ImageIcon(getClass().getResource("/imagenes/hierba.png"));
 		this.inicio = new ImageIcon(getClass().getResource("/imagenes/mario3.png"));
 		Image m = this.inicio.getImage();
 		this.inicio = new ImageIcon(m.getScaledInstance(70, 70, Image.SCALE_DEFAULT));
@@ -42,7 +46,7 @@ public class GUIMatriz extends JPanel{
 		this.bloqueado = new ImageIcon(getClass().getResource("/imagenes/bowser.gif"));
 		Image b = bloqueado.getImage();
 		this.bloqueado = new ImageIcon(b.getScaledInstance(70, 70, Image.SCALE_DEFAULT));
-		this.camino = new ImageIcon(getClass().getResource("/imagenes/suelo.jpg"));
+		this.camino = new ImageIcon(getClass().getResource("/imagenes/suelo.png"));
 		this.caja = new ImageIcon(getClass().getResource("/imagenes/cajita.gif"));
 		Image c = caja.getImage();
 		this.caja = new ImageIcon(c.getScaledInstance(70, 70, Image.SCALE_DEFAULT));
@@ -60,19 +64,10 @@ public class GUIMatriz extends JPanel{
 		inicializarPanel();
 	}
 
-	public ArrayList<Coordenadas> getSavepoint() {
-		return savepoint;
-	}
-
-	public void setSavepoint(ArrayList<Coordenadas> savepoint) {
-		this.savepoint = savepoint;
-	}
-
 	private void inicializarPanel() {
 		this.setName("Tablero");
 		panel= new Celda[altura][anchura];
-		this.setLayout(new GridLayout(altura, anchura)); //ordenacion de celdas alto x ancho
-		//INICIALIZACION DE LA TABLA.
+		this.setLayout(new GridLayout(altura, anchura));
 		for( int x=0; x< altura;x++){
 			for (int y=0; y< anchura;y++){
 				this.panel[x][y] = new Celda();
@@ -85,8 +80,8 @@ public class GUIMatriz extends JPanel{
 		}
 	}
 	
-	//Inicializa los escuchadores de los botones de la matriz
-	public void inicializarEscuchadores(MouseListener e){
+	//Inicializa los labels
+	public void inicializarLabels(MouseListener e){
 		for(int x=0;x<altura;x++){
 			for(int y=0; y<anchura;y++){
 				this.panel[x][y].addMouseListener(e);;
@@ -95,6 +90,13 @@ public class GUIMatriz extends JPanel{
 				this.panel[x][y].setColumna(y);
 			}
 		}
+	}
+	
+	public void pintarInicio(int x, int y) {
+		this.panel[x][y].addFoto(this.libre, this.inicio);
+		this.panel[x][y].setTipo(Casillas.INICIO);
+		this.tieneInicio = true;
+		this.corInicio = new Coordenadas(x, y);
 	}
 	
 	public void pintarCeldaCamino(int x, int y){
@@ -154,37 +156,18 @@ public class GUIMatriz extends JPanel{
 		this.corFinal = corFinal;
 	}
 
-	public void pintarInicio(int x, int y) {
-		this.panel[x][y].addFoto(this.libre, this.inicio);
-		this.panel[x][y].setTipo(Casillas.INICIO);
-		this.tieneInicio = true;
-		this.corInicio = new Coordenadas(x, y);
-	}
-
-	/**
-	 * @return the altura
-	 */
 	public int getAltura() {
 		return altura;
 	}
 
-	/**
-	 * @param altura the altura to set
-	 */
 	public void setAltura(int altura) {
 		this.altura = altura;
 	}
 
-	/**
-	 * @return the anchura
-	 */
 	public int getAnchura() {
 		return anchura;
 	}
 
-	/**
-	 * @param anchura the anchura to set
-	 */
 	public void setAnchura(int anchura) {
 		this.anchura = anchura;
 	}
@@ -241,6 +224,15 @@ public class GUIMatriz extends JPanel{
 	public void setAlturaCasillas(double alturaCasillas) {
 		this.alturaCasillas = alturaCasillas;
 	}
+	
+	public ArrayList<Coordenadas> getSavepoint() {
+		return savepoint;
+	}
+
+	public void setSavepoint(ArrayList<Coordenadas> savepoint) {
+		this.savepoint = savepoint;
+	}
+
 
 	public void ponerAlturas(double alt) {
 		this.alturaCasillas = alt;
@@ -248,12 +240,6 @@ public class GUIMatriz extends JPanel{
 			for (int y=0; y< anchura;y++){
 				this.panel[x][y].crearAltura(alturaCasillas);
 			}
-		}
-		for( int x=0; x< altura;x++){
-			for (int y=0; y< anchura;y++){
-				System.out.print("| " + this.panel[x][y].getAltura() + " |");
-			}
-			System.out.println();
 		}
 	}
 	

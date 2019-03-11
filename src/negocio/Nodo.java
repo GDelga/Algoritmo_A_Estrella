@@ -2,6 +2,9 @@ package negocio;
 
 import negocio.Coordenadas;
 
+/**
+ * @author Guillermo Delgado Yepes
+ */
 public class Nodo {
 
 	private Nodo nodoPadre; //Sirve para saber el nodo que le precede

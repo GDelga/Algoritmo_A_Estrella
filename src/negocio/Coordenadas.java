@@ -1,5 +1,8 @@
 package negocio;
 
+/**
+ * @author Guillermo Delgado Yepes
+ */
 public class Coordenadas {
 	private int x;
 	private int y;

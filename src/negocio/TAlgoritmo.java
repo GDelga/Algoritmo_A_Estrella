@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import presentacion.Celda;
 
+/**
+ * @author Guillermo Delgado Yepes
+ */
 public class TAlgoritmo {
 	private Coordenadas inicio;
 	private Coordenadas meta;

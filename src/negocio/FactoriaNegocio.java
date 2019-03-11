@@ -1,5 +1,8 @@
 package negocio;
 
+/**
+ * @author Guillermo Delgado Yepes
+ */
 public abstract class FactoriaNegocio {
 
 	private static FactoriaNegocio instance;

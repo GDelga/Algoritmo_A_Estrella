@@ -2,6 +2,9 @@ package controlador;
 
 import presentacion.Contexto;
 
+/**
+ * @author Guillermo Delgado Yepes
+ */
 public abstract class Controlador {
 
 	private static Controlador instance;

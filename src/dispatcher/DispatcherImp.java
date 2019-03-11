@@ -1,12 +1,12 @@
-/**
- * 
- */
 package dispatcher;
 
 import presentacion.Contexto;
 import presentacion.Events;
 import presentacion.GUITamano;
 
+/**
+ * @author Guillermo Delgado Yepes
+ */
 public class DispatcherImp extends Dispatcher {
 
 	@Override

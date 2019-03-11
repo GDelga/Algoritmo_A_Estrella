@@ -10,6 +10,9 @@ import javax.swing.JLabel;
 
 import negocio.Casillas;
 
+/**
+ * @author Guillermo Delgado Yepes
+ */
 public class Celda extends JLabel{
 	
 	private int fila;
@@ -27,8 +30,7 @@ public class Celda extends JLabel{
 	}
 	
 	public void crearAltura(double altura) {
-		this.altura = (Math.random() * ((altura+500) - (altura/2))) + (altura/2);
-		System.out.println(this.altura);
+		this.altura = (Math.random() * ((altura+(altura/4)) - (altura/2))) + (altura/2);
 	}
 
 	public Celda(){

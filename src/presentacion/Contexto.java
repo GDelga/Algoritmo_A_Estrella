@@ -3,6 +3,9 @@
  */
 package presentacion;
 
+/**
+ * @author Guillermo Delgado Yepes
+ */
 public class Contexto {
 
 	private Object dato;

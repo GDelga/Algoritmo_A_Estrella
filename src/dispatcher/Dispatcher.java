@@ -1,10 +1,10 @@
-/**
- * 
- */
 package dispatcher;
 
 import presentacion.Contexto;
 
+/**
+ * @author Guillermo Delgado Yepes
+ */
 public abstract class Dispatcher {
 
 	private static Dispatcher instance;

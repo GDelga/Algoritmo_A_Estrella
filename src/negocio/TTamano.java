@@ -1,5 +1,8 @@
 package negocio;
 
+/**
+ * @author Guillermo Delgado Yepes
+ */
 public class TTamano {
 	private int altura;
 	private int anchura;

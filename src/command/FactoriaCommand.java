@@ -3,6 +3,9 @@
  */
 package command;
 
+/**
+ * @author Guillermo Delgado Yepes
+ */
 public abstract class FactoriaCommand {
 
 	private static FactoriaCommand instance;
